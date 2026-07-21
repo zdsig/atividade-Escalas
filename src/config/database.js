@@ -20,6 +20,6 @@ try {
 console.error({mensagem:"Erro ao iniciar o banco" , erro: error.message})
 }
 
-export default conect;
+export default conect
 
 

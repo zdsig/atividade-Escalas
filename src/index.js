@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import router from "./modules/escalas/routes/escala.routes.js";
+import router from "./modules/escala/routes/escala.routes.js";
 
 dotenv.config();
 

@@ -1,33 +1,31 @@
 import conect from "../../../config/database.js"
 class EscalaModel {
     static async cadastrar(codigo, identidadeMilitar, dataServico, tipoServico) {
-        const values = [codigo, identidadeMilitar, dataServico, tipoServico]
-        const query = `insert into escala (codigo,identidadeMilitar,dataServiço,tipoServico) values($1,$2,$3,$4) RETURNING* `
-        const resultado = await conect.query(query, values)
-        return resultado.rows[0]
+        const values = [codigo, identidadeMilitar, dataServico, tipoServico];
+        const query = `insert into escalas (codigo, identidade_militar, data_serviço, tipo_serviço) values ($1, $2, $3, $4) returning *`;
+        const resultado = await conect.query(query, values);
+        return resultado.rows[0];
     }
     static async listar() {
-        const query = `select * from escala`
-        const resultado = await conect.query(query)
+        const query = `select * from escalas`;
+        const resultado = await conect.query(query);
         return resultado;
     }
 
-    static async listarCodigo() {
-        const values = [codigo]
-        const query = `select * from escala where codigo = $1`
+    static async listarCodigo(codigo) {
+        const values = [codigo];
+        const query = `select * from escalas where codigo = $1`
         const resultado = await conect.query(query, values)
-        return resultado;
+        return resultado.rows[0];
     }
 
     static async editarTotal(codigo, identidadeMilitar, dataServico, tipoServico) {
         const escala = await EscalaModel.listarCodigo(codigo);
-        if (escala.length === 0) {
+        if (escala.rows.length === 0) {
             return null;
         }
-        const values = [codigo, identidadeMilitar, dataServico, tipoServico]
-        const query = `update escala
-        set dataServico = $2 , tipoServico = $3
-        where codigo = $1 returning`
+        const values = [codigo, dataServico, tipoServico]
+        const query = `update escalas set data_serviço = $2, tipo_serviço = $3 where codigo = $1* returning *`
         const resultado = await conect.query(query, values)
         return resultado.rows[0]
     }
@@ -36,10 +34,11 @@ class EscalaModel {
         if (escala.length === 0) {
             return null;
         }
-        const values = [codigo, identidadeMilitar, dataServico, tipoServico]
-        const query = `update escala
-        set dataServico = coalesce($2,dataServico) , tipoServico = coalesce($3,tipoServico)
-        where codigo = $1 returning*;`
+        const values = [codigo, dataServico, tipoServico]
+        const query = `update escalas
+        set  data_serviço = coalesce($2,  data_serviço)*
+       tipo_serviço= coalesce($3,tipo_serviço)
+        where codigo = $1 returning*`;
         const resultado = await conect.query(query, values)
         return resultado.rows[0]
     }
@@ -49,16 +48,16 @@ class EscalaModel {
             return null;
         }
         const values = [codigo]
-        const query = `delete from escala where codigo = $1 returning*`
+        const query = `delete from escalas where codigo = $1 returning*`
         const resultado = await conect.query(query, values)
         return resultado.rows[0]
     }
 
     static async excluirTodos(){
-        const query = `delete from evento returning*`
+        const query = `delete from escalas returning*`;
         const resultado = await conect.query(query)
         return resultado.rows
     }
 }
 
-export default EscalaModel;
+export default EscalaModel
